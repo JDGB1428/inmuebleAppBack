@@ -18,9 +18,9 @@ return new class extends Migration
             $table->decimal('price');
             $table->string('direction');
             $table->integer('room');
-            $table->integer('area');
+            $table->integer('area_m2');
             $table->integer('bathrooms');
-            $table->enum('state', ['available', 'sold', 'rented'])->default('available');
+            $table->enum('state', ['not-available','available', 'sold', 'rented'])->default('available');
             $table->timestamps();
         });
     }
