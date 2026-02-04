@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description');
             $table->decimal('price');
@@ -20,7 +22,7 @@ return new class extends Migration
             $table->integer('room');
             $table->integer('area_m2');
             $table->integer('bathrooms');
-            $table->enum('state', ['not-available','available', 'sold', 'rented'])->default('available');
+            $table->enum('state', ['not-available','available', 'sold', 'rented', 'published'])->default('available');
             $table->timestamps();
         });
     }
