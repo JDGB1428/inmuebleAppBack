@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Properties extends Model
 {
     protected $fillable = [
-        'name',
         'title',
         'description',
         'price',
         'direction',
         'room',
-        'area',
+        'area_m2',
         'bathrooms',
         'state'
     ];
+
 }
