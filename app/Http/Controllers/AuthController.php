@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -22,9 +21,13 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+
         return[
             'token' => $user->createToken('token')->plainTextToken,
-            'user' => $user
+            'user' => [
+                $user,
+                'roles' => $user->roles->pluck('name'),
+            ]
         ];
     }
 
@@ -37,6 +40,8 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'phone' => $data['phone']
         ]);
+
+        $user->assignRole('client');
 
         return [
             'token' => $user->createToken('token')->plainTextToken,
