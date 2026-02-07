@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -25,9 +26,15 @@ class AuthController extends Controller
         return[
             'token' => $user->createToken('token')->plainTextToken,
             'user' => [
-                $user,
+                'created_at' => $user->created_at,
+                'email' => $user->name,
+                'id' => $user->id,
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'updated_at' => $user->updated_at,
                 'roles' => $user->roles->pluck('name'),
             ]
+
         ];
     }
 
@@ -48,5 +55,13 @@ class AuthController extends Controller
             'user' => $user
         ];
 
+    }
+
+    public function logout(Request $request){
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
+        return [
+            'user' => null
+        ];
     }
 }
