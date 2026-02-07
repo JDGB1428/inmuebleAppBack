@@ -52,7 +52,15 @@ class AuthController extends Controller
 
         return [
             'token' => $user->createToken('token')->plainTextToken,
-            'user' => $user
+            'user' => [
+                'created_at' => $user->created_at,
+                'email' => $user->name,
+                'id' => $user->id,
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'updated_at' => $user->updated_at,
+                'roles' => $user->roles->pluck('name'),
+            ]
         ];
 
     }
