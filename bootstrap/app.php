@@ -26,5 +26,18 @@ return Application::configure(basePath: dirname(__DIR__))
                     'message' => 'No tienes permiso para realizar esta accion'
                 ], 403);
             }
+
+
         });
+
+        $exceptions->render(function(UnauthorizedException $e, $request) {
+            if($request->is('api/*')){
+                return response()->json([
+                    'message' => 'No autenticado, Tu session ha expirado'
+                ], 401);
+            }
+
+
+        });
+
     })->create();
