@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Properties extends Model
 {
     protected $fillable = [
+        'user_id',
+        'category_id',
         'title',
         'description',
         'price',
@@ -15,7 +17,8 @@ class Properties extends Model
         'room',
         'area_m2',
         'bathrooms',
-        'state'
+        'state',
+        'images'
     ];
 
 
@@ -25,6 +28,10 @@ class Properties extends Model
 
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function propertyImages(){
+        return $this->hasMany(PropertyImage::class);
     }
 
 }
