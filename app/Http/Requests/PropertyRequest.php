@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PropertyRequest extends FormRequest
 {
@@ -22,19 +23,25 @@ class PropertyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'number'],
+            'title' => ['required'],
             'description' => ['required', 'max:500'],
-            'price' => ['required', 'number'],
-            'direction' => ['required', ],
-            'room' => ['required', 'number'],
-            'area_m2' => ['required', 'number'],
-            'bathrooms' => ['required', 'number'],
-            'state' => ['required'],
-            'images' => ['image','mimes:jpeg,png,jpg,gif', 'max:2048']
+            'price' => ['required', 'numeric'],
+            'direction' => ['required',],
+            'room' => ['required', 'numeric'],
+            'area_m2' => ['required', 'numeric'],
+            'bathrooms' => ['required', 'numeric'],
+            'state' => [
+                'required',
+                Rule::in(['available', 'not-available', 'published', 'rented', 'sold'])
+            ],
+            'category_id' =>['required','exists:categories,id'],
+            'image' => 'required|array|min:1', // Debe ser un array
+            'image.*' => 'image|mimes:jpeg,png,jpg|max:10240'
         ];
     }
 
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
             'title.required' => 'El titulo es obligatorio',
             'description.required' => 'El campo descripcion es obligatorio',
@@ -44,7 +51,8 @@ class PropertyRequest extends FormRequest
             'area_m2.required' => 'El campo es obligatorio',
             'bathrooms.required' => 'El campo es obligatorio',
             'state.required' => 'El estado es obligatorio',
-            'images' => 'La imagen es obligatoria',
+            'image.required' => 'La imagen es obligatoria',
+            'category_id' => 'La categoria es requerida',
 
             'description.max' => 'El campo descripcion es hasta maximo 500 caracteres',
             'price.number' => 'El campo precio solo acepta numeros',
