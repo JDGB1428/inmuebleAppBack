@@ -18,7 +18,11 @@ class Properties extends Model
         'area_m2',
         'bathrooms',
         'state',
-        'images'
+        'image'
+    ];
+
+    protected $casts = [
+        'image' => 'array',
     ];
 
 
