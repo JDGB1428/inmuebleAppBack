@@ -15,25 +15,25 @@ class CategoriesSeeder extends Seeder
     {
         DB::table('categories')->insert([
             [
-                'name' => 'House',
+                'name' => 'Casa',
                 'icon' => 'house',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'Apartment',
+                'name' => 'Apartamento',
                 'icon' => 'apartment',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'Land',
+                'name' => 'Terreno',
                 'icon' => 'land',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'name' => 'Office',
+                'name' => 'Oficina',
                 'icon' => 'office',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
