@@ -50,7 +50,7 @@ class User extends Authenticatable
     }
 
 
-    public function properties(){
+    public function property(){
         return $this->hasMany(Properties::class);
     }
 }
