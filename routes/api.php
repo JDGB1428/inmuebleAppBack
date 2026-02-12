@@ -11,21 +11,12 @@ Route::middleware('auth:sanctum')->group(function (){
         return $request->user();
     });
 
-    Route::group(['middleware' => [
-        'role:admin|agent',
-        'permission:
-            ver inmuebles,
-            crear inmuebles,
-            editar inmuebles,
-            eliminar inmuebles']],
-            function(){
-                Route::get('/property',[PropertyController::class, 'index']);
-                Route::post('/property', [PropertyController::class, 'store']);
+    Route::group(['middleware' => ['role:admin|agent']], function(){
+        Route::apiResource('/property', PropertyController::class);
     });
 
-    Route::apiResource('/categories', CategoriesController::class);
+    Route::get('/category', [CategoriesController::class, 'index']);
     Route::post('/logout', [AuthController::class, 'logout']);
-
 });
 
 Route::post('/login', [AuthController::class, 'login']);
