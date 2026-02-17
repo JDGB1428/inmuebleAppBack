@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description');
-            $table->decimal('price');
+            $table->decimal('price',15, 2);
             $table->string('direction');
             $table->integer('room');
             $table->integer('area_m2');
