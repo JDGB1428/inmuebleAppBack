@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PropertyRequest;
+use App\Models\Properties;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,7 +21,11 @@ class PropertyController extends Controller
         ];
     }
 
-    public function index() {}
+    public function index() {
+        return [
+            'data' => Properties::all()
+        ];
+    }
 
     public function store(PropertyRequest $request)
     {
@@ -54,8 +59,8 @@ class PropertyController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Inmueble creado con múltiples imágenes',
-            'property' => $property
+            'message' => 'El inmueble ha sido creado correctamente',
+            'data' => $property
         ], 201); // El código 201 va fuera del array
     }
 
