@@ -25,7 +25,7 @@ class PropertyRequest extends FormRequest
         return [
             'title' => ['required'],
             'description' => ['required', 'max:500'],
-            'price' => ['required', 'numeric'],
+            'price' => ['required', 'numeric', 'min:0'],
             'direction' => ['required',],
             'room' => ['required', 'numeric'],
             'area_m2' => ['required', 'numeric'],
@@ -55,10 +55,10 @@ class PropertyRequest extends FormRequest
             'category_id' => 'La categoria es requerida',
 
             'description.max' => 'El campo descripcion es hasta maximo 500 caracteres',
-            'price.number' => 'El campo precio solo acepta numeros',
-            'room.number' => 'El campo room solo acepta numeros',
-            'area_m2.number' => 'El campo solo acepta numeros',
-            'bathrooms.number' => 'El campo solo acepta numeros',
+            'price.numeric' => 'El campo precio solo acepta numeros',
+            'room.numeric' => 'El campo room solo acepta numeros',
+            'area_m2.numeric' => 'El campo solo acepta numeros',
+            'bathrooms.numeric' => 'El campo solo acepta numeros',
 
         ];
     }
