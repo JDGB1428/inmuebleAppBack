@@ -28,7 +28,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'message' => 'Avatar actualizado',
-            'avatar_url' => $user->avatar
+            'data' => $user->avatar
         ]);
     }
 }

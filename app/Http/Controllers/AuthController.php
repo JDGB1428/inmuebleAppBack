@@ -25,7 +25,7 @@ class AuthController extends Controller
 
         return[
             'token' => $user->createToken('token')->plainTextToken,
-            'user' => [
+            'data' => [
                 'created_at' => $user->created_at,
                 'email' => $user->name,
                 'id' => $user->id,
@@ -52,7 +52,7 @@ class AuthController extends Controller
 
         return [
             'token' => $user->createToken('token')->plainTextToken,
-            'user' => [
+            'data' => [
                 'created_at' => $user->created_at,
                 'email' => $user->name,
                 'id' => $user->id,
@@ -69,7 +69,7 @@ class AuthController extends Controller
         $user = $request->user();
         $user->currentAccessToken()->delete();
         return [
-            'user' => null
+            'data' => null
         ];
     }
 }
