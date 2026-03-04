@@ -30,7 +30,6 @@ class AuthController extends Controller
                 'email' => $user->name,
                 'id' => $user->id,
                 'name' => $user->name,
-                'phone' => $user->phone,
                 'updated_at' => $user->updated_at,
                 'roles' => $user->roles->pluck('name'),
             ]
@@ -45,7 +44,6 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'phone' => $data['phone']
         ]);
 
         $user->assignRole('client');
@@ -57,7 +55,6 @@ class AuthController extends Controller
                 'email' => $user->name,
                 'id' => $user->id,
                 'name' => $user->name,
-                'phone' => $user->phone,
                 'updated_at' => $user->updated_at,
                 'roles' => $user->roles->pluck('name'),
             ]
