@@ -18,7 +18,6 @@ class UserSeeder extends Seeder
             'name' => 'Admin Principal',
             'email' => 'admin@admin.com',
             'password' => Hash::make('@password123'), // Contraseña segura
-            'phone' => '1234567890', // Si tienes este campo
         ]);
 
         // Asignar rol (si usas Spatie)
@@ -28,7 +27,6 @@ class UserSeeder extends Seeder
             'name' => 'Agente Inmobiliario',
             'email' => 'agente@test.com',
             'password' => Hash::make('@password123'),
-            'phone' => '1234567890'
         ]);
         $agent->assignRole('agent');
     }
