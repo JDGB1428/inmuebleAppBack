@@ -24,11 +24,21 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'editar inmuebles'])->syncRoles([$role_agent, $role_admin]);
         Permission::create(['name' => 'eliminar inmuebles'])->syncRoles([$role_agent, $role_admin]);
 
+        //Permisos especiales de admin
+        Permission::create(['name' => 'ver papelera inmuebles'])->assignRole([$role_admin]);
+        Permission::create(['name' => 'restaurar inmuebles'])->assignRole([$role_admin]);
+
         // Usuarios
         Permission::create(['name' => 'ver usuarios'])->assignRole($role_admin);
         Permission::create(['name' => 'banear usuarios'])->assignRole($role_admin);
         Permission::create(['name' => 'crear usuarios'])->assignRole($role_admin);
         Permission::create(['name' => 'editar usuarios'])->assignRole($role_admin);
+
+        //Perfiles
+        Permission::create(['name' => 'ver todos los perfiles'])->assignRole($role_admin);
+        Permission::create(['name' => 'editar perfil'])->syncRoles([$role_agent, $role_client]);
+        Permission::create(['name' => 'crear perfil'])->syncRoles([$role_agent, $role_client]);
+        Permission::create(['name' => 'banear perfil'])->assignRole($role_admin);
 
 
     }
