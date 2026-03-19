@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -29,5 +28,12 @@ class UserSeeder extends Seeder
             'password' => Hash::make('@password123'),
         ]);
         $agent->assignRole('agent');
+
+        $agent2 = User::create([
+            'name' => 'Agente2 Inmobiliario',
+            'email' => 'agente2@test2.com',
+            'password' => Hash::make('@password123'),
+        ]);
+        $agent2->assignRole('agent');
     }
 }
