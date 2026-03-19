@@ -11,7 +11,7 @@ class LikeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class LikeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'property_id' => 'required|exists:properties,id'
         ];
     }
 }
