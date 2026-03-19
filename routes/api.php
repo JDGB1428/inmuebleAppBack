@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
+// Opcional: Si quieres que usuarios no logueados vean las propiedades,
+// mueve el GET /property aquí afuera. (Por ahora lo dejamos privado).
+
 // ==========================================
 // RUTAS PRIVADAS (Requieren token de Sanctum)
 // ==========================================
@@ -33,11 +36,29 @@ Route::middleware('auth:sanctum')->group(function () {
     // ------------------------------------------
     // RUTAS GENERALES (Cualquier usuario logueado: Admin, Agente o Cliente)
     // ------------------------------------------
-    // Obtiene el perfil del usuario logueado
-    Route::get('/profile', [ProfileController::class, 'show']);
 
-    // Crea o actualiza el perfil del usuario logueado
+    // Perfiles
+    Route::get('/profile', [ProfileController::class, 'show']);
     Route::post('/profile', [ProfileController::class, 'update']);
+
+    // ✅ Propiedades: Lectura (Todos pueden ver la lista y el detalle)
+    Route::get('/property', [PropertyController::class, 'index']);
+    Route::get('/property/{property}', [PropertyController::class, 'show']);
+
+
+    // ------------------------------------------
+    // RUTAS PARA ADMINISTRADORES Y AGENTES (Creación y Modificación)
+    // ------------------------------------------
+    Route::group(['middleware' => ['role:admin|agent']], function() {
+
+        // Propiedades: Escritura (Solo Admin y Agente pueden crear, editar y borrar)
+        Route::post('/property', [PropertyController::class, 'store']);
+        Route::put('/property/{property}', [PropertyController::class, 'update']);
+        Route::delete('/property/{property}', [PropertyController::class, 'destroy']);
+
+        // Ver la lista de todos los perfiles en el Panel de control
+        Route::get('/profiles', [ProfileController::class, 'index']);
+    });
 
 
     // ------------------------------------------
@@ -48,21 +69,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/property/{id}/restore', [PropertyController::class, 'restore']);
     });
 
-    // ------------------------------------------
-    // RUTAS PARA ADMINISTRADORES Y AGENTES
-    // ------------------------------------------
-    Route::group(['middleware' => ['role:admin|agent']], function() {
-        Route::apiResource('/property', PropertyController::class);
-
-        // Ver la lista de todos los perfiles (Panel de control)
-        Route::get('/profiles', [ProfileController::class, 'index']);
-    });
 
     // ------------------------------------------
     // RUTAS EXCLUSIVAS PARA CLIENTES
     // ------------------------------------------
     Route::group(['middleware' => ['role:client']], function () {
-        // Dar Like a una propiedad
         Route::post('/property/{id}/like', [LikesController::class, 'store']);
     });
 
