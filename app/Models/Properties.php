@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Properties extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'user_id',
         'category_id',
@@ -18,11 +21,13 @@ class Properties extends Model
         'area_m2',
         'bathrooms',
         'state',
-        'image'
+        'image',
+        'features'
     ];
 
     protected $casts = [
         'image' => 'array',
+        'features' => 'array',
     ];
 
 
@@ -36,6 +41,10 @@ class Properties extends Model
 
     public function propertyImages(){
         return $this->hasMany(PropertyImage::class);
+    }
+
+    public function likes(){
+        return $this->belongsToMany(User::class);
     }
 
 }
