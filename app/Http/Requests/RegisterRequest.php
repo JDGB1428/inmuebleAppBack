@@ -26,7 +26,6 @@ class RegisterRequest extends FormRequest
             'name' => ['required','string'],
             'email' => ['required','email','unique:users,email'],
             'password' => ['required','confirmed', PasswordRules::min(8)->numbers()->letters()->symbols()],
-            'phone' => ['required', 'min:10'],
         ];
     }
 
@@ -42,8 +41,6 @@ class RegisterRequest extends FormRequest
             'password.numbers' => 'La contraseña debe contener al menos un número',
             'password.letters' => 'La contraseña debe contener al menos una letra',
             'password.symbols' => 'La contraseña debe contener al menos un símbolo',
-            'phone.required' => 'El numero es obligatorio',
-            'phone.min' => 'El numero minimo debe ser de 10 digitos'
         ];
     }
 }
