@@ -6,6 +6,7 @@ use App\Http\Controllers\LikesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 // ==========================================
@@ -20,7 +21,10 @@ Route::post('/register', [AuthController::class, 'register']);
 // ==========================================
 // RUTAS PRIVADAS (Requieren token de Sanctum)
 // ==========================================
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 Route::middleware('auth:sanctum')->group(function () {
+
+
 
     // Obtener usuario actual
     Route::get('/user', function (Request $request) {
@@ -43,13 +47,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ✅ Propiedades: Lectura (Todos pueden ver la lista y el detalle)
     Route::get('/property', [PropertyController::class, 'index']);
-    Route::get('/property/{property}', [PropertyController::class, 'show']);
+    Route::get('/property/{property}', [PropertyController::class, 'show'])->whereNumber('property');
 
 
     // ------------------------------------------
     // RUTAS PARA ADMINISTRADORES Y AGENTES (Creación y Modificación)
     // ------------------------------------------
-    Route::group(['middleware' => ['role:admin|agent']], function() {
+    Route::group(['middleware' => ['role:admin|agent']], function () {
 
         // Propiedades: Escritura (Solo Admin y Agente pueden crear, editar y borrar)
         Route::post('/property', [PropertyController::class, 'store']);
@@ -75,6 +79,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // ------------------------------------------
     Route::group(['middleware' => ['role:client']], function () {
         Route::post('/property/{id}/like', [LikesController::class, 'store']);
+        Route::get('/user/likes', [LikesController::class, 'myLikes']);
     });
-
 });
