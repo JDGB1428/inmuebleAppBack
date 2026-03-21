@@ -1,0 +1,376 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Inmuebles",
+        "description": "Documentación de la aplicación de Inmuebles",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/test": {
+            "get": {
+                "summary": "Endpoint de prueba para Swagger",
+                "operationId": "dc097032a606e8d42c32d872872316c6",
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa"
+                    }
+                }
+            }
+        },
+        "/api/property": {
+            "get": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Listar todos los inmuebles",
+                "description": "Retorna una lista de inmuebles. Los administradores ven todos, los agentes ven los suyos, y los clientes ven solo los disponibles o rentados.",
+                "operationId": "673e4f505d2feda35deb1c326e67f146",
+                "responses": {
+                    "200": {
+                        "description": "Lista de inmuebles obtenida con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Crear un nuevo inmueble",
+                "description": "Crea un inmueble permitiendo subir una o múltiples imágenes.",
+                "operationId": "8c7827ef2ca1e03a483245ee65a13b37",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "price",
+                                    "state"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Título del inmueble",
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "description": "Precio",
+                                        "type": "number"
+                                    },
+                                    "state": {
+                                        "description": "Estado (ej. available, rented)",
+                                        "type": "string"
+                                    },
+                                    "image[]": {
+                                        "description": "Arreglo de imágenes a subir",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Inmueble creado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/property/{id}": {
+            "get": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Mostrar un inmueble específico",
+                "operationId": "888be9e65e9d2ff2fc1161c3375a4c78",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del inmueble",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle del inmueble",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Inmueble no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Actualizar un inmueble",
+                "description": "Actualiza datos e imágenes. NOTA: Se usa POST simulando PUT (_method=PUT) debido a la limitación de PHP/Laravel con multipart/form-data en peticiones PUT.",
+                "operationId": "f5bd51d7b4757252003c5570b66a2fba",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del inmueble",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "_method": {
+                                        "description": "Requerido por Laravel para spoofing",
+                                        "type": "string",
+                                        "example": "PUT"
+                                    },
+                                    "title": {
+                                        "description": "Título del inmueble",
+                                        "type": "string"
+                                    },
+                                    "existing_images[]": {
+                                        "description": "Rutas de las imágenes que se desean conservar",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "image[]": {
+                                        "description": "Nuevas imágenes a subir",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inmueble actualizado correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Eliminar un inmueble (Soft Delete)",
+                "operationId": "35739c0dbe346a416b5691bd43857aec",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del inmueble",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inmueble eliminado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Inmueble no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/property/trashed": {
+            "get": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Ver inmuebles en papelera",
+                "operationId": "844c5b702d44b46f8a7dba2f32aa8179",
+                "responses": {
+                    "200": {
+                        "description": "Lista de inmuebles eliminados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/property/{id}/restore": {
+            "post": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Restaurar un inmueble eliminado",
+                "operationId": "735ca5905f63b44d87816832e1347ed1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del inmueble",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inmueble restaurado con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Inmueble no encontrado en la papelera"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Inmuebles",
+            "description": "Endpoints para la gestión de inmuebles"
+        }
+    ]
+}
