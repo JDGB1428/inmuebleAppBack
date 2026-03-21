@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Properties extends Model
@@ -31,20 +32,23 @@ class Properties extends Model
     ];
 
 
-    public function categories(): BelongsTo {
+    public function categories(): BelongsTo
+    {
         return $this->belongsTo(Categories::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function propertyImages(){
+    public function propertyImages()
+    {
         return $this->hasMany(PropertyImage::class);
     }
 
-    public function likes(){
-        return $this->belongsToMany(User::class);
+    public function likes(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'likes', 'property_id', 'user_id');
     }
-
 }
