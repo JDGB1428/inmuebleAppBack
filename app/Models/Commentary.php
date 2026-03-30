@@ -11,6 +11,8 @@ class Commentary extends Model
 
     use HasFactory;
 
+    protected $table = 'commentary';
+
     protected $fillable = [
         'property_id',
         'user_id',
