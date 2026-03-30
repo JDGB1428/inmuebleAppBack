@@ -245,6 +245,161 @@
                 ]
             }
         },
+        "/api/property/{property}/comments": {
+            "get": {
+                "tags": [
+                    "Comentarios"
+                ],
+                "summary": "Listar comentarios de un inmueble",
+                "description": "Retorna todos los comentarios asociados a un inmueble con la información del usuario que comentó.",
+                "operationId": "2b15e5dee406980187fcd71c0fdd37f6",
+                "parameters": [
+                    {
+                        "name": "property",
+                        "in": "path",
+                        "description": "ID del inmueble",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comentarios obtenidos correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 15
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Juan Pérez"
+                                            },
+                                            "avatar": {
+                                                "type": "string",
+                                                "example": "https://example.com/storage/avatars/user.png",
+                                                "nullable": true
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "Me interesa este inmueble"
+                                            },
+                                            "createdAt": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Inmueble no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/property/{property}/comment": {
+            "post": {
+                "tags": [
+                    "Comentarios"
+                ],
+                "summary": "Crear un comentario en un inmueble",
+                "description": "Crea un comentario autenticado sobre un inmueble y devuelve el comentario con los datos del usuario.",
+                "operationId": "5dfa85d10066b4428717323543055bec",
+                "parameters": [
+                    {
+                        "name": "property",
+                        "in": "path",
+                        "description": "ID del inmueble",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "description"
+                                ],
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Quiero más información sobre este inmueble"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comentario creado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Juan Pérez"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Quiero más información sobre este inmueble"
+                                        },
+                                        "avatar": {
+                                            "type": "string",
+                                            "example": "https://example.com/storage/avatars/user.png",
+                                            "nullable": true
+                                        },
+                                        "createdAt": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/test": {
             "get": {
                 "summary": "Endpoint de prueba para Swagger",
@@ -950,6 +1105,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Comentarios",
+            "description": "Endpoints para gestionar comentarios de inmuebles"
+        },
         {
             "name": "Likes",
             "description": "Endpoints para gestionar likes de inmuebles"
