@@ -34,7 +34,7 @@ class Properties extends Model
 
     public function commentary(): HasMany
     {
-        return $this->hasMany(Commentary::class)->lastest();
+        return $this->hasMany(Commentary::class, 'property_id')->latest();
     }
 
 
