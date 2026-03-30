@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\CommentaryController;
 use App\Http\Controllers\LikesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
@@ -49,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/property', [PropertyController::class, 'index']);
     Route::get('/property/{property}', [PropertyController::class, 'show'])->whereNumber('property');
 
+    Route::get('/property/{property}/comments', [CommentaryController::class, 'index']);
+
 
     // ------------------------------------------
     // RUTAS PARA ADMINISTRADORES Y AGENTES (Creación y Modificación)
@@ -60,6 +63,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/property/{property}', [PropertyController::class, 'update']);
         Route::delete('/property/{property}', [PropertyController::class, 'destroy']);
 
+
+
         // Ver la lista de todos los perfiles en el Panel de control
         Route::get('/profiles', [ProfileController::class, 'index']);
     });
@@ -69,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // RUTAS EXCLUSIVAS PARA ADMINISTRADORES
     // ------------------------------------------
     Route::group(['middleware' => ['role:admin']], function () {
+
         Route::get('/property/trashed', [PropertyController::class, 'trashed']);
         Route::post('/property/{id}/restore', [PropertyController::class, 'restore']);
     });
@@ -78,7 +84,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // RUTAS EXCLUSIVAS PARA CLIENTES
     // ------------------------------------------
     Route::group(['middleware' => ['role:client']], function () {
-        Route::post('/property/{id}/like', [LikesController::class, 'store']);
         Route::get('/user/likes', [LikesController::class, 'myLikes']);
+        Route::post('/property/{id}/like', [LikesController::class, 'store']);
+        Route::post('/property/{property}/comment', [CommentaryController::class, 'store']);
     });
 });
