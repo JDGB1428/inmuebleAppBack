@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Properties extends Model
@@ -30,6 +31,11 @@ class Properties extends Model
         'image' => 'array',
         'features' => 'array',
     ];
+
+    public function commentary(): HasMany
+    {
+        return $this->hasMany(Commentary::class)->lastest();
+    }
 
 
     public function categories(): BelongsTo
