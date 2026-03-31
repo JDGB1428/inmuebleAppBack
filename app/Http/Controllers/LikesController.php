@@ -104,10 +104,10 @@ class LikesController extends Controller
     public function myLikes(Request $request)
     {
         $user = $request->user();
-        $likedIds = $user->likes()->pluck('properties.id')->toArray();
+        $likedProperties = $user->likes()->get();
 
         return response()->json([
-            'data' => $likedIds
+            'data' => $likedProperties
         ]);
     }
 }
