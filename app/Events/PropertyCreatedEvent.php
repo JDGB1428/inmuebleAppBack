@@ -41,8 +41,9 @@ class PropertyCreatedEvent implements ShouldBroadcastNow
     {
         return [
             'property_id' => $this->property->id,
-            'title' => '¡Nuevo inmueble disponible!',
-            'address' => $this->property->address ?? 'Nueva dirección'
+            'name' => '¡Nuevo inmueble disponible!',
+            'title' => $this->property->title,
+            'direction' => $this->property->direction ?? 'Nueva dirección'
         ];
     }
 }
