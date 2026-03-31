@@ -2,17 +2,16 @@
 
 namespace App\Notifications;
 
-
-
+use App\Models\Properties;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
 class NewPropertyNotification extends Notification
 {
     use Queueable;
-    public $property;
+    public Properties $property;
 
-    public function __construct($property)
+    public function __construct(Properties $property)
     {
         $this->property = $property;
     }
@@ -26,8 +25,9 @@ class NewPropertyNotification extends Notification
     {
         return [
             'property_id' => $this->property->id,
-            'title' => '¡Nuevo inmueble disponible!',
-            'address' => $this->property->address ?? 'Nueva dirección'
+            'name' => '¡Nuevo inmueble disponible!',
+            'title' => $this->property->title,
+            'direction' => $this->property->direction ?? 'Nueva dirección'
         ];
     }
 }
