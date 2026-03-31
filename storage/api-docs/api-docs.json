@@ -513,6 +513,183 @@
                 ]
             }
         },
+        "/api/notifications/unread": {
+            "get": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Obtener notificaciones no leídas",
+                "description": "Retorna un arreglo con todas las notificaciones que el usuario autenticado aún no ha marcado como leídas.",
+                "operationId": "ee9db6d957b6d4cfcc62a6c567bb5738",
+                "responses": {
+                    "200": {
+                        "description": "Notificaciones no leídas obtenidas correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "example": "06e22f2b-8a8f-4d32-8418-bd73e3a479eb"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "example": "App\\\\Notifications\\\\PropertyLiked"
+                                            },
+                                            "notifiable_type": {
+                                                "type": "string",
+                                                "example": "App\\\\Models\\\\User"
+                                            },
+                                            "notifiable_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "data": {
+                                                "properties": {
+                                                    "property_id": {
+                                                        "type": "integer",
+                                                        "example": 15
+                                                    },
+                                                    "message": {
+                                                        "type": "string",
+                                                        "example": "A alguien le gustó tu propiedad"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "read_at": {
+                                                "type": "string",
+                                                "example": null,
+                                                "nullable": true
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/read/{propertyId}": {
+            "post": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Marcar notificación como leída por ID de propiedad",
+                "description": "Busca notificaciones no leídas asociadas a un property_id específico dentro del campo JSON 'data' y las marca como leídas.",
+                "operationId": "336ff1527d86bc66adebd9f090e82991",
+                "parameters": [
+                    {
+                        "name": "propertyId",
+                        "in": "path",
+                        "description": "ID de la propiedad",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "15"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notificación marcada como leída",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Notificación no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Notificación no encontrada"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/read-all": {
+            "post": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Marcar todas las notificaciones como leídas",
+                "description": "Marca masivamente todas las notificaciones pendientes del usuario autenticado como leídas.",
+                "operationId": "64de8aad8a2628cc039670edd2bc398b",
+                "responses": {
+                    "200": {
+                        "description": "Todas las notificaciones fueron marcadas como leídas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/profiles": {
             "get": {
                 "tags": [
@@ -1112,6 +1289,10 @@
         {
             "name": "Likes",
             "description": "Endpoints para gestionar likes de inmuebles"
+        },
+        {
+            "name": "Notificaciones",
+            "description": "Endpoints para gestionar las notificaciones del usuario autenticado"
         },
         {
             "name": "Perfiles",
