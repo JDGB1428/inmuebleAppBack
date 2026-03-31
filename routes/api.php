@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentaryController;
 use App\Http\Controllers\LikesController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Http\Request;
@@ -87,5 +88,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user/likes', [LikesController::class, 'myLikes']);
         Route::post('/property/{id}/like', [LikesController::class, 'store']);
         Route::post('/property/{property}/comment', [CommentaryController::class, 'store']);
+        Route::get('/notifications/unread', [NotificationController::class, 'getUnread']);
+        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead']);
+        Route::post('/notifications/{propertyId}/mark-read', [NotificationController::class, 'markOneAsRead']);
     });
 });
