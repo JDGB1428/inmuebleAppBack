@@ -25,19 +25,7 @@ class CategoriesSeeder extends Seeder
                 'icon' => 'apartment',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'Terreno',
-                'icon' => 'land',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'Oficina',
-                'icon' => 'office',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
+            ]
         ]);
     }
 }
