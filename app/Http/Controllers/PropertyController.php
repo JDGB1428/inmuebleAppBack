@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\PropertyCreatedEvent;
+use App\Events\PropertyStatusChanged;
+use App\Events\PropertyStored as EventsPropertyStored;
 use App\Http\Requests\PropertyRequest;
 use App\Models\Properties;
-use App\Models\User;
-use App\Notifications\NewPropertyNotification;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Arr;
+
+
 
 /**
  * @OA\Tag(
@@ -106,38 +107,16 @@ class PropertyController extends Controller
     public function store(PropertyRequest $request)
     {
         $validatedData = $request->validated();
-        $rutasDeImagenes = [];
 
-        if ($request->hasFile('image')) {
-            $imagenes = is_array($request->file('image'))
-                ? $request->file('image')
-                : [$request->file('image')];
+        $validatedData['image'] = collect(Arr::wrap($request->file('image')))
+            ->map(fn($image) => Storage::url($image->store('properties', 'public')))
+            ->toArray();
 
-            foreach ($imagenes as $image) {
-                $path = $image->store('properties', 'public');
-                $rutasDeImagenes[] = Storage::url($path);
-            }
-        }
-
-        $validatedData['image'] = $rutasDeImagenes;
-
+        $user = $request->user();
         $property = $request->user()->property()->create($validatedData);
 
-        $users = User::role('client')
-            ->where('id', '!=', $request->user()->id)
-            ->get();
+        event(new EventsPropertyStored($property, $user->id));
 
-        if ($users->isNotEmpty()) {
-            // 1. Guardar silenciosamente en la BD
-            Notification::send($users, new NewPropertyNotification($property));
-
-            // 2. Disparar el WebSocket al canal privado de cada cliente
-            foreach ($users as $user) {
-                broadcast(new PropertyCreatedEvent($property, $user->id));
-            }
-        }
-
-        // <-- AÑADE ESTE BLOQUE AL FINAL -->
         return response()->json([
             'message' => 'El inmueble ha sido creado correctamente',
             'data' => $property
@@ -220,36 +199,33 @@ class PropertyController extends Controller
     {
         $property = Properties::findOrFail($id);
         $validatedData = $request->validated();
-        $imagenesExistentes = $request->input('existing_images', []);
 
-        $rutasFinalesDeImagenes = $imagenesExistentes;
+        $existingImages = $request->input('existing_images', []);
 
-        if (is_array($property->image)) {
-            $imagenesBorradas = array_diff($property->image, $imagenesExistentes);
+        $imagesToDelete = array_diff($property->image ?? [], $existingImages);
 
-            foreach ($imagenesBorradas as $imagenParaBorrar) {
-                $oldPath = str_replace('/storage/', '', $imagenParaBorrar);
-                Storage::disk('public')->delete($oldPath);
-            }
+        foreach ($imagesToDelete as $image) {
+            Storage::disk('public')->delete(str_replace('/storage/', '', $image));
         }
 
-        if ($request->hasFile('image')) {
-            $imagenesNuevas = is_array($request->file('image'))
-                ? $request->file('image')
-                : [$request->file('image')];
+        $newImages = $request->hasFile('image')
+            ? collect(Arr::wrap($request->file('image')))
+            ->map(fn($file) => Storage::url($file->store('properties', 'public')))
+            ->toArray()
+            : [];
 
-            foreach ($imagenesNuevas as $image) {
-                $path = $image->store('properties', 'public');
-                $rutasFinalesDeImagenes[] = Storage::url($path);
-            }
-        }
-        $validatedData['image'] = empty($rutasFinalesDeImagenes) ? null : $rutasFinalesDeImagenes;
+        $finalImages = array_merge($existingImages, $newImages);
+        $validatedData['image'] = empty($finalImages) ? null : $finalImages;
 
         $property->update($validatedData);
 
+        if($property->wasChanged('state')){
+            event(new PropertyStatusChanged($property));
+        }
+
         return response()->json([
             'message' => 'El inmueble ha sido actualizado correctamente',
-            'data' => $property->fresh()
+            'data'    => $property->fresh()
         ], 200);
     }
 
