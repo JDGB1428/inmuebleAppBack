@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\Properties;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class NewPropertyNotification extends Notification
@@ -18,7 +19,7 @@ class NewPropertyNotification extends Notification
 
     public function via($notifiable): array
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     public function toDatabase($notifiable): array
@@ -29,5 +30,15 @@ class NewPropertyNotification extends Notification
             'title' => $this->property->title,
             'direction' => $this->property->direction ?? 'Nueva dirección'
         ];
+    }
+
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'property_id' => $this->property->id,
+            'name' => '¡Nuevo inmueble disponible!',
+            'title' => $this->property->title,
+            'direction' => $this->property->direction ?? 'Nueva dirección'
+        ]);
     }
 }
