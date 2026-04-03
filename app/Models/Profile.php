@@ -19,7 +19,8 @@ class Profile extends Model
         'specialties',
         'social_links',
         'job_title',
-        'license_number'
+        'license_number',
+        'nationality'
     ];
 
     protected $casts = [
