@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Event;
+use App\Events\PropertyStored;
+use App\Listeners\NotifyUsersOfPropertyStatusChange;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Event::listen(
+            PropertyStored::class,
+            NotifyUsersOfPropertyStatusChange::class
+        );
     }
 }
