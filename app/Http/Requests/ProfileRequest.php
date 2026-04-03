@@ -51,6 +51,32 @@ class ProfileRequest extends FormRequest
             'social_links'        => 'nullable|array',
             'avatar'              => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'license_number'      => 'nullable|string|max:20',
+            'nationality'         => 'nullable|string'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'address.string'              => 'La dirección debe ser un texto válido.',
+            'address.max'                 => 'La dirección no puede exceder los 255 caracteres.',
+            'phone.string'                => 'El número de teléfono debe ser un texto válido.',
+            'phone.max'                   => 'El número de teléfono no puede exceder los 20 caracteres.',
+            'whatsapp.string'             => 'El número de WhatsApp debe ser un texto válido.',
+            'whatsapp.max'                => 'El número de WhatsApp no puede exceder los 20 caracteres.',
+            'years_of_experience.integer' => 'Los años de experiencia deben ser un número entero.',
+            'years_of_experience.min'     => 'Los años de experiencia no pueden ser un valor negativo.',
+            'years_of_experience.max'     => 'Los años de experiencia no pueden ser mayores a 100.',
+            'job_title.string'            => 'El cargo o título profesional debe ser un texto válido.',
+            'job_title.max'               => 'El cargo no puede exceder los 255 caracteres.',
+            'specialties.array'           => 'Las especialidades deben enviarse en un formato de lista válido.',
+            'social_links.array'          => 'Los enlaces sociales deben enviarse en un formato de lista válido.',
+            'avatar.image'                => 'El archivo subido para el avatar debe ser una imagen.',
+            'avatar.mimes'                => 'El avatar debe estar en uno de los siguientes formatos: jpeg, png, jpg o webp.',
+            'avatar.max'                  => 'El peso de la imagen del avatar no debe superar los 2MB.',
+            'license_number.string'       => 'El número de licencia debe ser un texto válido.',
+            'license_number.max'          => 'El número de licencia no puede exceder los 20 caracteres.',
+            'nationality.string'          => 'La nacionalidad debe ser un texto válido.',
         ];
     }
 }
