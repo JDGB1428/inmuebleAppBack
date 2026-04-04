@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileRequest;
 use App\Models\Profile;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use OpenApi\Annotations as OA;
 
@@ -90,9 +90,9 @@ class ProfileController extends Controller
      *     )
      * )
      */
-    public function show(Request $request)
+    public function show($id)
     {
-        $user = $request->user()->load('profile');
+        $user = User::with('profile')->findOrFail($id);
 
         return response()->json([
             'data' => $user->only(['id', 'name', 'email', 'profile'])
