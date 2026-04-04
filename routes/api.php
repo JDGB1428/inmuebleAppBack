@@ -44,7 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // ------------------------------------------
 
     // Perfiles
-    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::get('/profile/{id}', [ProfileController::class, 'show']);
     Route::post('/profile', [ProfileController::class, 'update']);
 
     // ✅ Propiedades: Lectura (Todos pueden ver la lista y el detalle)
