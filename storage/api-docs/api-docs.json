@@ -734,14 +734,26 @@
                 ]
             }
         },
-        "/api/profile": {
+        "/api/profile/{id}": {
             "get": {
                 "tags": [
                     "Perfiles"
                 ],
-                "summary": "Mostrar el perfil del usuario autenticado",
-                "description": "Retorna los datos básicos del usuario autenticado junto con su perfil asociado.",
-                "operationId": "ede45b19680d6fb1319013a741a05734",
+                "summary": "Mostrar el perfil de un usuario por su ID",
+                "description": "Retorna los datos básicos de un usuario específico junto con su perfil asociado basándose en el ID proporcionado.",
+                "operationId": "dc165a15206200b87bf5f866cd0f603c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Perfil obtenido correctamente",
@@ -777,6 +789,9 @@
                     },
                     "401": {
                         "description": "No autenticado"
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado"
                     }
                 },
                 "security": [
@@ -784,7 +799,9 @@
                         "bearerAuth": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/profile": {
             "post": {
                 "tags": [
                     "Perfiles"
@@ -937,8 +954,20 @@
                     "Inmuebles"
                 ],
                 "summary": "Listar todos los inmuebles",
-                "description": "Retorna una lista de inmuebles. Los administradores ven todos, los agentes ven los suyos, y los clientes ven solo los disponibles o rentados.",
+                "description": "Retorna una lista de inmuebles. Los administradores ven todos, los agentes ven los suyos, y los clientes ven solo los disponibles o rentados. Permite filtrar por categoría de propiedad.",
                 "operationId": "673e4f505d2feda35deb1c326e67f146",
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "ID de la categoría para filtrar (ej. 1 para Casa, 2 para Apartamento)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Lista de inmuebles obtenida con éxito",
