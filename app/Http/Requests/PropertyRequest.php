@@ -58,7 +58,9 @@ class PropertyRequest extends FormRequest
                 Rule::in(['available', 'not-available', 'published', 'rented', 'sold'])
             ],
             'category_id' => ['required', 'exists:categories,id'],
-            'features' => 'nullable|array'
+            'features' => 'nullable|array',
+            'country' => 'required',
+            'city' => 'required'
         ];
 
         // Lógica de imágenes (Crear vs Editar)
@@ -117,6 +119,8 @@ class PropertyRequest extends FormRequest
             'state.required' => 'El estado es obligatorio',
             'image.required' => 'La imagen es obligatoria',
             'category_id' => 'La categoria es requerida',
+            'city.required' => 'La ciudad es requerida',
+            'country.required' => 'El pais es requerido',
 
             'description.max' => 'El campo descripcion es hasta maximo 500 caracteres',
             'price.numeric' => 'El campo precio solo acepta numeros',
