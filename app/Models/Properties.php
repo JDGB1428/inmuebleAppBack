@@ -24,6 +24,8 @@ class Properties extends Model
         'bathrooms',
         'state',
         'image',
+        'city',
+        'country',
         'features'
     ];
 
