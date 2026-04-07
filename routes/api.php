@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentaryController;
+use App\Http\Controllers\FilterController;
 use App\Http\Controllers\LikesController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -49,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ✅ Propiedades: Lectura (Todos pueden ver la lista y el detalle)
     Route::get('/property', [PropertyController::class, 'index']);
+    Route::get('/property/filter', [FilterController::class, 'filterByCategory']);
+    Route::get('/property/search', [FilterController::class, 'search']);
     Route::get('/property/{property}', [PropertyController::class, 'show'])->whereNumber('property');
 
     Route::get('/property/{property}/comments', [CommentaryController::class, 'index']);
