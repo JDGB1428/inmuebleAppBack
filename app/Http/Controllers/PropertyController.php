@@ -38,15 +38,23 @@ class PropertyController extends Controller
      * @OA\Get(
      *     path="/api/property",
      *     summary="Listar todos los inmuebles",
-     *     description="Retorna una lista de inmuebles. Los administradores ven todos, los agentes ven los suyos, y los clientes ven solo los disponibles o rentados.",
+     *     description="Retorna una lista de inmuebles. Los administradores ven todos, los agentes solo ven los suyos y los demás usuarios solo ven inmuebles disponibles o rentados.",
      *     tags={"Inmuebles"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Lista de inmuebles obtenida con éxito",
      *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(type="object")
+     *             )
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado"
      *     )
      * )
      */
@@ -219,7 +227,7 @@ class PropertyController extends Controller
 
         $property->update($validatedData);
 
-        if($property->wasChanged('state')){
+        if ($property->wasChanged('state')) {
             event(new PropertyStatusChanged($property));
         }
 
