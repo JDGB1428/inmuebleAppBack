@@ -411,6 +411,90 @@
                 }
             }
         },
+        "/api/property/filter": {
+            "get": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Filtrar inmuebles por categoría",
+                "description": "Obtiene una lista de inmuebles filtrados por el ID de su categoría enviando el parámetro en la URL (?category_id=X).",
+                "operationId": "9cd7350e09056eacd4b4d34e9e91af61",
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "ID de la categoría para aplicar el filtro",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de inmuebles filtrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/property/search": {
+            "get": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Buscar inmuebles por título o ciudad",
+                "description": "Realiza una búsqueda de inmuebles donde el título o la ciudad coincidan parcialmente con el término ingresado (?search=X).",
+                "operationId": "db3c77de6df4f7571b59159cd7c8e928",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Término de búsqueda (ej. Cartagena, Apartamento, etc.)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Cartagena"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resultados de la búsqueda",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/property/{id}/like": {
             "post": {
                 "tags": [
@@ -954,20 +1038,8 @@
                     "Inmuebles"
                 ],
                 "summary": "Listar todos los inmuebles",
-                "description": "Retorna una lista de inmuebles. Los administradores ven todos, los agentes ven los suyos, y los clientes ven solo los disponibles o rentados. Permite filtrar por categoría de propiedad.",
+                "description": "Retorna una lista de inmuebles. Los administradores ven todos, los agentes solo ven los suyos y los demás usuarios solo ven inmuebles disponibles o rentados.",
                 "operationId": "673e4f505d2feda35deb1c326e67f146",
-                "parameters": [
-                    {
-                        "name": "category_id",
-                        "in": "query",
-                        "description": "ID de la categoría para filtrar (ej. 1 para Casa, 2 para Apartamento)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Lista de inmuebles obtenida con éxito",
@@ -986,6 +1058,9 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "No autenticado"
                     }
                 },
                 "security": [
