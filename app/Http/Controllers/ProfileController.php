@@ -65,11 +65,21 @@ class ProfileController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/profile",
-     *     summary="Mostrar el perfil del usuario autenticado",
-     *     description="Retorna los datos básicos del usuario autenticado junto con su perfil asociado.",
+     *     path="/api/profile/{id}",
+     *     summary="Mostrar el perfil de un usuario por su ID",
+     *     description="Retorna los datos básicos de un usuario específico junto con su perfil asociado basándose en el ID proporcionado.",
      *     tags={"Perfiles"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID del usuario",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Perfil obtenido correctamente",
@@ -87,6 +97,10 @@ class ProfileController extends Controller
      *     @OA\Response(
      *         response=401,
      *         description="No autenticado"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Usuario no encontrado"
      *     )
      * )
      */
