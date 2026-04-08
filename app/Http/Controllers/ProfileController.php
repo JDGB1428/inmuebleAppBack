@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileRequest;
 use App\Models\Profile;
 use App\Models\User;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Storage;
 use OpenApi\Annotations as OA;
 
@@ -16,6 +17,19 @@ use OpenApi\Annotations as OA;
  */
 class ProfileController extends Controller
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('ver todos los perfiles'), only: ['index']),
+            new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('ver mi pefil'), only: ['show']),
+            new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('crear perfil'), only: ['store']),
+            new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('editar perfil'), only: ['update']),
+            new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('banear perfil'), only: ['destroy']),
+            new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('restaurar perfil'), only: ['restore']),
+            new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('ver papelera de perfiles'), only: ['trashed'])
+        ];
+    }
     /**
      * @OA\Get(
      *     path="/api/profiles",
@@ -251,4 +265,83 @@ class ProfileController extends Controller
             'message' => 'El perfil ha sido eliminado'
         ]);
     }
+
+        /**
+     * @OA\Get(
+     *     path="/api/profiles/trashed",
+     *     summary="Ver perfiles en la papelera",
+     *     description="Retorna una lista de todos los perfiles que han sido eliminados lógicamente (Soft Deletes).",
+     *     tags={"Perfiles"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de perfiles eliminados obtenida con éxito",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Perfiles en la papelera"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(type="object")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado"
+     *     )
+     * )
+     */
+    public function trashed()
+    {
+        $trashedProfiles = Profile::onlyTrashed()->get();
+
+        return response()->json([
+            // Nota: Corregí el texto de 'Propiedades' a 'Perfiles' para que coincida con el modelo
+            'message' => 'Perfiles en la papelera',
+            'data' => $trashedProfiles
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/profiles/{id}/restore",
+     *     summary="Restaurar un perfil eliminado",
+     *     description="Restaura un perfil que se encuentra en la papelera (Soft Deletes) utilizando su ID.",
+     *     tags={"Perfiles"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del perfil a restaurar",
+     *         @OA\Schema(type="string", example="1")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Perfil restaurado correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="El perfil ha sido restaurado con éxito.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Perfil no encontrado en la papelera"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado"
+     *     )
+     * )
+     */
+    public function restore(String $id)
+    {
+        $profile = Profile::withTrashed()->findOrFail($id);
+        $profile->restore();
+
+        return response()->json([
+            'message' => 'El perfil ha sido restaurado con éxito.'
+        ]);
+    }
+
+
 }
