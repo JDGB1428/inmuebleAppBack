@@ -48,7 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile/{id}', [ProfileController::class, 'show']);
     Route::post('/profile', [ProfileController::class, 'update']);
 
-    // ✅ Propiedades: Lectura (Todos pueden ver la lista y el detalle)
     Route::get('/property', [PropertyController::class, 'index']);
     Route::get('/property/filter', [FilterController::class, 'filterByCategory']);
     Route::get('/property/search', [FilterController::class, 'search']);
@@ -58,9 +57,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // ------------------------------------------
-    // RUTAS PARA ADMINISTRADORES Y AGENTES (Creación y Modificación)
+    // RUTAS PARA ADMINISTRADORES Y PROPETARIOS (Creación y Modificación)
     // ------------------------------------------
-    Route::group(['middleware' => ['role:admin|agent']], function () {
+    Route::group(['middleware' => ['role:admin|owner']], function () {
 
         // Propiedades: Escritura (Solo Admin y Agente pueden crear, editar y borrar)
         Route::post('/property', [PropertyController::class, 'store']);
@@ -73,6 +72,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/profiles', [ProfileController::class, 'index']);
     });
 
+    Route::group(['middleware' => ['role:owner|client']], function(){
+        Route::delete('/profiles/{id}', [ProfileController::class, 'destroy']);
+        Route::get('/notifications/unread', [NotificationController::class, 'getUnread']);
+        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead']);
+        Route::post('/notifications/{propertyId}/mark-read', [NotificationController::class, 'markOneAsRead']);
+    });
+
 
     // ------------------------------------------
     // RUTAS EXCLUSIVAS PARA ADMINISTRADORES
@@ -81,6 +87,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/property/trashed', [PropertyController::class, 'trashed']);
         Route::post('/property/{id}/restore', [PropertyController::class, 'restore']);
+        Route::get('/profiles/trashed', [ProfileController::class, 'trashed']);
+        Route::post('/profiles/{id}/restore', [ProfileController::class, 'restore']);
     });
 
 
@@ -91,8 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user/likes', [LikesController::class, 'myLikes']);
         Route::post('/property/{id}/like', [LikesController::class, 'store']);
         Route::post('/property/{property}/comment', [CommentaryController::class, 'store']);
-        Route::get('/notifications/unread', [NotificationController::class, 'getUnread']);
-        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead']);
-        Route::post('/notifications/{propertyId}/mark-read', [NotificationController::class, 'markOneAsRead']);
+
+
     });
 });
