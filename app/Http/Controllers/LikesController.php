@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PropertyLiked;
 use App\Http\Requests\LikeRequest;
+use App\Models\Properties;
 use Illuminate\Http\Request;
 use OpenApi\Annotations as OA;
 
@@ -67,6 +69,14 @@ class LikesController extends Controller
         $result = $user->likes()->toggle($propertyId);
 
         $isLiked = count($result['attached']) > 0;
+
+        if($isLiked){
+            $property = Properties::find($propertyId);
+
+            if($property){
+                PropertyLiked::dispatch($property, $user);
+            }
+        }
 
         return response()->json([
             'message' => $isLiked ? 'Like agregado' : 'Like eliminado',
