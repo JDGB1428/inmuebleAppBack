@@ -22,18 +22,18 @@ class UserSeeder extends Seeder
         // Asignar rol (si usas Spatie)
         $admin->assignRole('admin');
 
-        $agent = User::create([
-            'name' => 'Agente Inmobiliario',
-            'email' => 'agente@test.com',
+        $owner = User::create([
+            'name' => 'PropetarioTest 1',
+            'email' => 'owner@test.com',
             'password' => Hash::make('@password123'),
         ]);
-        $agent->assignRole('agent');
+        $owner->assignRole('owner');
 
-        $agent2 = User::create([
-            'name' => 'Agente2 Inmobiliario',
-            'email' => 'agente2@test2.com',
+        $owner2 = User::create([
+            'name' => 'PropetarioTest 2',
+            'email' => 'owner2@test2.com',
             'password' => Hash::make('@password123'),
         ]);
-        $agent2->assignRole('agent');
+        $owner2->assignRole('owner');
     }
 }
