@@ -40,7 +40,8 @@ class FilterController extends Controller
         $properties = Properties::query()
             ->when($request->filled('category_id'), function ($query) use ($request) {
                 $query->where('category_id', $request->category_id);
-            });
+            })
+            ->get();
 
         return response()->json([
             'data' => $properties
@@ -82,7 +83,8 @@ class FilterController extends Controller
                     $q->where('title', 'like', $searchTerm)
                         ->orWhere('city', 'like', $searchTerm);
                 });
-            });
+            })
+            ->get();
 
         return response()->json([
             'data' => $properties
