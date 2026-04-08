@@ -1032,13 +1032,106 @@
                 ]
             }
         },
+        "/api/profiles/trashed": {
+            "get": {
+                "tags": [
+                    "Perfiles"
+                ],
+                "summary": "Ver perfiles en la papelera",
+                "description": "Retorna una lista de todos los perfiles que han sido eliminados lógicamente (Soft Deletes).",
+                "operationId": "21a490ac56c80bfda3f1cbf265c60d25",
+                "responses": {
+                    "200": {
+                        "description": "Lista de perfiles eliminados obtenida con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Perfiles en la papelera"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profiles/{id}/restore": {
+            "post": {
+                "tags": [
+                    "Perfiles"
+                ],
+                "summary": "Restaurar un perfil eliminado",
+                "description": "Restaura un perfil que se encuentra en la papelera (Soft Deletes) utilizando su ID.",
+                "operationId": "cdd1126fab83c9876c291874123bb8fd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del perfil a restaurar",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Perfil restaurado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "El perfil ha sido restaurado con éxito."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Perfil no encontrado en la papelera"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/property": {
             "get": {
                 "tags": [
                     "Inmuebles"
                 ],
                 "summary": "Listar todos los inmuebles",
-                "description": "Retorna una lista de inmuebles. Los administradores ven todos, los agentes solo ven los suyos y los demás usuarios solo ven inmuebles disponibles o rentados.",
+                "description": "Retorna una lista de inmuebles. Los administradores ven todos, los propetario solo ven los suyos y los demás usuarios solo ven inmuebles disponibles o rentados.",
                 "operationId": "673e4f505d2feda35deb1c326e67f146",
                 "responses": {
                     "200": {
