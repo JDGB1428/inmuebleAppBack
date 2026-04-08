@@ -21,7 +21,7 @@ use Illuminate\Support\Arr;
  */
 class PropertyController extends Controller
 {
-    public function __construct() {}
+
 
     public static function middleware(): array
     {
@@ -29,6 +29,7 @@ class PropertyController extends Controller
             new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('ver inmuebles'), only: ['index', 'show']),
             new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('crear inmuebles'), only: ['store']),
             new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('editar inmuebles'), only: ['update']),
+            new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('eliminar inmueble'), only: ['destroy']),
             new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('restaurar inmuebles'), only: ['restore']),
             new Middleware(\Spatie\Permission\Middleware\PermissionMiddleware::using('ver papelera inmuebles'), only: ['trashed'])
         ];
@@ -38,7 +39,7 @@ class PropertyController extends Controller
      * @OA\Get(
      *     path="/api/property",
      *     summary="Listar todos los inmuebles",
-     *     description="Retorna una lista de inmuebles. Los administradores ven todos, los agentes solo ven los suyos y los demás usuarios solo ven inmuebles disponibles o rentados.",
+     *     description="Retorna una lista de inmuebles. Los administradores ven todos, los propetario solo ven los suyos y los demás usuarios solo ven inmuebles disponibles o rentados.",
      *     tags={"Inmuebles"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
@@ -63,10 +64,10 @@ class PropertyController extends Controller
         $user = $request->user();
 
         $properties = Properties::query()
-            ->when($user->hasRole('agent'), function ($query) use ($user) {
+            ->when($user->hasRole('owner'), function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
-            ->when(! $user->hasRole(['admin', 'agent']), function ($query) {
+            ->when(! $user->hasRole(['admin', 'owner']), function ($query) {
                 $query->whereIn('state', ['available', 'rented']);
             })
             ->latest()
