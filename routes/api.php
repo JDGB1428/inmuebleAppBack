@@ -8,6 +8,7 @@ use App\Http\Controllers\LikesController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\RoleRequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -75,8 +76,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::group(['middleware' => ['role:owner|client']], function(){
         Route::delete('/profiles/{id}', [ProfileController::class, 'destroy']);
         Route::get('/notifications/unread', [NotificationController::class, 'getUnread']);
-        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead']);
-        Route::post('/notifications/{propertyId}/mark-read', [NotificationController::class, 'markOneAsRead']);
+        Route::post('/notifications/read/{propertyId}', [NotificationController::class, 'markOneAsRead']);
+        Route::post('/notifications/read-all', [NotificationController::class, 'markAsRead']);
     });
 
 
@@ -89,6 +90,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/property/{id}/restore', [PropertyController::class, 'restore']);
         Route::get('/profiles/trashed', [ProfileController::class, 'trashed']);
         Route::post('/profiles/{id}/restore', [ProfileController::class, 'restore']);
+        Route::get('/role_requests',[RoleRequestController::class, 'index']);
+        Route::post('/role_request/{id}/approve',[RoleRequestController::class, 'approve']);
+        Route::post('/role_request/{id}/reject',[RoleRequestController::class, 'reject']);
     });
 
 
@@ -99,7 +103,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user/likes', [LikesController::class, 'myLikes']);
         Route::post('/property/{id}/like', [LikesController::class, 'store']);
         Route::post('/property/{property}/comment', [CommentaryController::class, 'store']);
-
+        Route::get('/role_requestById',[RoleRequestController::class, 'showMyRequest']);
+        Route::post('/role_request',[RoleRequestController::class, 'store']);
 
     });
 });
