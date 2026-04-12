@@ -157,8 +157,10 @@ class PropertyController extends Controller
      */
     public function show(string $id)
     {
+        $property = Properties::withCount('likes')->findOrFail($id);
+
         return response()->json([
-            'data' => Properties::findOrFail($id)
+            'data' => $property
         ], 200);
     }
 
