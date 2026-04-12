@@ -1467,6 +1467,248 @@
                     }
                 ]
             }
+        },
+        "/api/role_requests": {
+            "get": {
+                "tags": [
+                    "Solicitudes de rol"
+                ],
+                "summary": "Listar solicitudes de rol pendientes",
+                "description": "Obtiene una lista de todas las solicitudes de rol que tienen el estado 'pendiente'. Incluye la información del usuario asociado a cada solicitud.",
+                "operationId": "931b29582b037fb79843e70bb7b1a1a4",
+                "responses": {
+                    "200": {
+                        "description": "Lista de solicitudes pendientes obtenida con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 4
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Quiero ser agente para publicar propiedades"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "pending"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "user": {
+                                                        "description": "Usuario que realizó la solicitud",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 4
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Carlos López"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "carlos@example.com"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/role_request": {
+            "post": {
+                "tags": [
+                    "Solicitudes de rol"
+                ],
+                "summary": "Enviar solicitud de rol",
+                "description": "Permite al usuario autenticado enviar una solicitud de rol. Si ya tiene una solicitud pendiente, no crea una nueva.",
+                "operationId": "d50dc94533df3db4587c2e23f2333032",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "description"
+                                ],
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Quiero solicitar el rol de agente inmobiliario"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Solicitud procesada correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Solicitud enviada correctamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/role_request/{id}/approve": {
+            "post": {
+                "tags": [
+                    "Solicitudes de rol"
+                ],
+                "summary": "Aprobar una solicitud de rol",
+                "description": "Cambia el estado de la solicitud a 'approved', asigna el rol de 'owner' al usuario (removiendo sus roles anteriores) y le envía una notificación.",
+                "operationId": "4eddff3ed37dfee6128fd383a7548826",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la solicitud de rol a aprobar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solicitud aprobada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Solicitud aprobada y rol actualizado."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Solicitud no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/role_request/{id}/reject": {
+            "post": {
+                "tags": [
+                    "Solicitudes de rol"
+                ],
+                "summary": "Rechazar una solicitud de rol",
+                "description": "Actualiza el estado de la solicitud a 'rejected'. El usuario mantendrá sus roles actuales.",
+                "operationId": "23d54a1f54ef984a4d1118d2a009b7bb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la solicitud de rol a rechazar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solicitud rechazada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Solicitud rechazada."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Solicitud no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1502,6 +1744,10 @@
         {
             "name": "Autenticación",
             "description": "Autenticación"
+        },
+        {
+            "name": "Solicitudes de rol",
+            "description": "Solicitudes de rol"
         }
     ]
 }
