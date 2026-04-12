@@ -36,11 +36,18 @@ class FilterController extends Controller
      */
     public function filterByCategory(Request $request)
     {
+        $user = $request->user();
 
         $properties = Properties::query()
+
+            ->when($user->hasRole('owner'), function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+
             ->when($request->filled('category_id'), function ($query) use ($request) {
                 $query->where('category_id', $request->category_id);
             })
+
             ->get();
 
         return response()->json([
@@ -76,14 +83,22 @@ class FilterController extends Controller
      */
     public function search(Request $request)
     {
+       $user = $request->user();
+
         $properties = Properties::query()
+
+            ->when($user->hasRole('owner'), function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+
             ->when($request->filled('search'), function ($query) use ($request) {
                 $searchTerm = '%' . $request->search . '%';
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('title', 'like', $searchTerm)
-                        ->orWhere('city', 'like', $searchTerm);
+                      ->orWhere('city', 'like', $searchTerm);
                 });
             })
+
             ->get();
 
         return response()->json([
