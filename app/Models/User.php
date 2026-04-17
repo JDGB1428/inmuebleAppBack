@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,7 +26,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone',
     ];
 
     /**
@@ -65,6 +65,10 @@ class User extends Authenticatable
     public function likes(): BelongsToMany
     {
         return $this->belongsToMany(Properties::class, 'likes', 'user_id', 'property_id');
+    }
+
+    public function bookings(): HasMany {
+        return $this->hasMany(Booking::class);
     }
 
     protected static function booted(): void
