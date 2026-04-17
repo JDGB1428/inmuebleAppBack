@@ -245,6 +245,242 @@
                 ]
             }
         },
+        "/api/property/{propertyId}/availabilities": {
+            "get": {
+                "tags": [
+                    "Reservas"
+                ],
+                "summary": "Obtener fechas no disponibles de una propiedad",
+                "description": "Devuelve únicamente las fechas de check_in y check_out de las reservas de una propiedad. Si el usuario envía un Bearer Token válido, el sistema calculará el campo 'is_my_booking' en true para sus propias reservas.",
+                "operationId": "978ed483d87f2ac02dbcfe5125a9a497",
+                "parameters": [
+                    {
+                        "name": "propertyId",
+                        "in": "path",
+                        "description": "ID de la propiedad a consultar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de fechas ocupadas obtenida correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "check_in": {
+                                                "description": "Fecha de llegada de la reserva",
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2026-05-10"
+                                            },
+                                            "check_out": {
+                                                "description": "Fecha de salida de la reserva",
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2026-05-15"
+                                            },
+                                            "is_my_booking": {
+                                                "description": "Indica si esta reserva le pertenece al usuario que realiza la petición (Requiere Token)",
+                                                "type": "boolean",
+                                                "example": false
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Propiedad no encontrada"
+                    }
+                },
+                "security": [
+                    {},
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/property/{propertyId}/bookings": {
+            "get": {
+                "tags": [
+                    "Reservas"
+                ],
+                "summary": "Listar reservas de una propiedad específica",
+                "description": "Devuelve todas las reservas de una propiedad, verificando que la propiedad pertenezca al usuario autenticado. Usado para poblar FullCalendar.",
+                "operationId": "295d13dd8d3466a9b269c37b023c3be4",
+                "parameters": [
+                    {
+                        "name": "propertyId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de reservas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/property/{propertyId}/booking": {
+            "post": {
+                "tags": [
+                    "Reservas"
+                ],
+                "summary": "Crear una nueva reserva para una propiedad",
+                "description": "Crea una reserva validando la disponibilidad de las fechas y la cantidad de huéspedes. El usuario se asigna automáticamente mediante el token de autenticación.",
+                "operationId": "00c6887444b41f1f5422f125c55cc836",
+                "parameters": [
+                    {
+                        "name": "propertyId",
+                        "in": "path",
+                        "description": "ID de la propiedad que se desea reservar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "check_in",
+                                    "check_out",
+                                    "guests_count"
+                                ],
+                                "properties": {
+                                    "check_in": {
+                                        "description": "Fecha de llegada (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-05-10"
+                                    },
+                                    "check_out": {
+                                        "description": "Fecha de salida (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-05-15"
+                                    },
+                                    "guests_count": {
+                                        "description": "Cantidad de huéspedes que se alojarán",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Reserva creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Reserva creada con éxito"
+                                        },
+                                        "data": {
+                                            "description": "Objeto de la reserva recién creada",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 101
+                                                },
+                                                "property_id": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "check_in": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2026-05-10"
+                                                },
+                                                "check_out": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2026-05-15"
+                                                },
+                                                "guests_count": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "total_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 750000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación (Fechas solapadas o datos incorrectos)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "El inmueble ya ha sido reservado para estas fechas por otro usuario."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "404": {
+                        "description": "Propiedad no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/property/{property}/comments": {
             "get": {
                 "tags": [
@@ -450,7 +686,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/property/search": {
@@ -492,7 +733,205 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/property/suggetsSearch": {
+            "get": {
+                "tags": [
+                    "Inmuebles"
+                ],
+                "summary": "Buscador de Inmuebles y Sugerencias",
+                "description": "Consulta el servicio de propiedades para buscar y filtrar inmuebles publicados. Aplica filtros por ciudad, capacidad total de huéspedes (adultos + niños) y verifica la disponibilidad real de fechas cruzando con las reservas existentes. Calcula e inyecta dinámicamente el precio total del viaje si se proporcionan fechas.",
+                "operationId": "09eaed63c85248516654a5974ff82a9d",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "Nombre de la ciudad, municipio o parte de ella (Ej. Cartagena, Medellín). Búsqueda parcial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Cartagena"
+                        }
+                    },
+                    {
+                        "name": "check_in",
+                        "in": "query",
+                        "description": "Fecha de llegada al alojamiento en formato YYYY-MM-DD. Debe enviarse junto con check_out.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-06-15"
+                        }
+                    },
+                    {
+                        "name": "check_out",
+                        "in": "query",
+                        "description": "Fecha de salida del alojamiento en formato YYYY-MM-DD. Debe enviarse junto con check_in y ser estrictamente mayor a este.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-06-20"
+                        }
+                    },
+                    {
+                        "name": "adults",
+                        "in": "query",
+                        "description": "Cantidad de adultos que se hospedarán (Valor por defecto: 1).",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 2
+                        }
+                    },
+                    {
+                        "name": "children",
+                        "in": "query",
+                        "description": "Cantidad de niños que se hospedarán. Suma a la capacidad requerida de la propiedad (Valor por defecto: 0).",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Búsqueda completada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "description": "Colección de inmuebles disponibles que cumplen con los filtros aplicados.",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 15
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Hermosa casa con piscina y vista al mar"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "Cartagena"
+                                                    },
+                                                    "price": {
+                                                        "description": "Precio base de la propiedad por una sola noche.",
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 250000
+                                                    },
+                                                    "likes_count": {
+                                                        "description": "Número de favoritos o 'me gusta' acumulados por la propiedad.",
+                                                        "type": "integer",
+                                                        "example": 42
+                                                    },
+                                                    "total_price_for_trip": {
+                                                        "description": "Costo total de la estancia calculada (Precio Base x Noches). Aparece solo si se pasaron fechas.",
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 1250000,
+                                                        "nullable": true
+                                                    },
+                                                    "total_nights": {
+                                                        "description": "Número total de noches calculadas de la estadía.",
+                                                        "type": "integer",
+                                                        "example": 5,
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "search_summary": {
+                                            "description": "Metadatos informativos que resumen los parámetros que el sistema terminó utilizando para la búsqueda.",
+                                            "properties": {
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "Cartagena",
+                                                    "nullable": true
+                                                },
+                                                "dates": {
+                                                    "type": "string",
+                                                    "example": "2026-06-15 al 2026-06-20"
+                                                },
+                                                "guests": {
+                                                    "type": "string",
+                                                    "example": "2 adultos, 1 niños"
+                                                },
+                                                "nights": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación (Unprocessable Entity). Ocurre si las fechas son inválidas (ej. formato incorrecto) o si check_in es posterior al check_out.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los datos proporcionados no son válidos."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "check_out": [
+                                                    "La fecha de salida debe ser una fecha posterior a la fecha de llegada."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error inesperado en el servidor."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/property/{id}/like": {
@@ -1608,6 +2047,93 @@
                 ]
             }
         },
+        "/api/role_requestById": {
+            "get": {
+                "tags": [
+                    "Role Requests"
+                ],
+                "summary": "Obtener la solicitud actual del usuario autenticado",
+                "description": "Devuelve la última solicitud de cambio de rol (cliente/propietario) realizada por el usuario actual.",
+                "operationId": "showMyRequest",
+                "responses": {
+                    "200": {
+                        "description": "Solicitud encontrada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "user_id": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Quiero rentar mi propiedad en el centro."
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "pendiente"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-04-09T15:30:00.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-04-09T15:30:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontró ninguna solicitud activa.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No tienes ninguna solicitud de agente activa."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autorizado (Token inválido o ausente).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/role_request/{id}/approve": {
             "post": {
                 "tags": [
@@ -1746,8 +2272,16 @@
             "description": "Autenticación"
         },
         {
+            "name": "Reservas",
+            "description": "Reservas"
+        },
+        {
             "name": "Solicitudes de rol",
             "description": "Solicitudes de rol"
+        },
+        {
+            "name": "Role Requests",
+            "description": "Role Requests"
         }
     ]
 }
