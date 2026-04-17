@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentaryController;
 use App\Http\Controllers\FilterController;
@@ -105,6 +106,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/property/{property}/comment', [CommentaryController::class, 'store']);
         Route::get('/role_requestById',[RoleRequestController::class, 'showMyRequest']);
         Route::post('/role_request',[RoleRequestController::class, 'store']);
+        Route::get('/property/{propertyId}/availabilities', [BookingController::class, 'getPropertyAvailability']);
+        Route::post('/property/{propertyId}/booking', [BookingController::class, 'store']);
+        Route::get('/property/suggetsSearch', [FilterController::class, 'searchSuggetProperty']);
+
+    });
+
+    Route::group(['middleware' => ['role:owner']], function() {
+        Route::get('/property/{propertyId}/bookings', [BookingController::class, 'getPropertyBookings']);
 
     });
 });
+
+
