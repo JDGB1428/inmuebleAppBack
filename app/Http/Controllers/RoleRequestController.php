@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RoleRequest as RequestsRoleRequest;
 use App\Models\RoleRequest;
+use App\Models\User;
+use App\Notifications\NewRoleRequestNotification;
 use App\Notifications\RoleApprovedNotification;
 use App\Notifications\RoleRejectNotification;
 use Illuminate\Http\Request;
@@ -99,24 +101,19 @@ class RoleRequestController extends Controller
 
     public function store(RequestsRoleRequest $request)
     {
-        $user = Auth::user()->id;
+        $user = Auth::user();
         $validatedData = $request->validated();
 
-        $exitingRequest = RoleRequest::where('user_id', $user)
-        ->where('status', 'pendiente')
-        ->first();
-
-        if($exitingRequest){
-            return response()->json([
-                'message' => 'Ya tienes una solicitud pendiente'
-            ]);
-        }
-
         RoleRequest::create([
-            'user_id' => $user,
+            'user_id' => $user->id,
             'description' => $validatedData['description'],
             'status' => 'pendiente'
         ]);
+
+        $admins = User::role('admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewRoleRequestNotification($user));
+        }
 
         return response()->json([
             'message' => 'Solicitud enviada correctamente'
