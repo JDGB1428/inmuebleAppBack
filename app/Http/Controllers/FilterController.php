@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchPropertyRequest;
 use App\Models\Properties;
-use App\Services\PropertySearchService;
-use Carbon\Carbon;
+use App\Services\PropertyService;
 use Illuminate\Http\Request;
 
 class FilterController extends Controller
@@ -14,7 +13,7 @@ class FilterController extends Controller
 
     protected $search_service;
 
-    public function __construct(PropertySearchService $search_service)
+    public function __construct(PropertyService $search_service)
     {
         $this->search_service = $search_service;
     }
