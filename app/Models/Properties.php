@@ -76,9 +76,9 @@ class Properties extends Model
         return $nights * $this->price;
     }
 
-    public function scopePublished($query)
+    public function scopeAvailable($query)
     {
-        return $query->where('state', 'published');
+        return $query->where('state', 'available');
     }
 
     public function scopeFilterByCity($query, $city)
