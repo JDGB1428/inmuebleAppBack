@@ -94,6 +94,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/role_requests',[RoleRequestController::class, 'index']);
         Route::post('/role_request/{id}/approve',[RoleRequestController::class, 'approve']);
         Route::post('/role_request/{id}/reject',[RoleRequestController::class, 'reject']);
+
+        Route::get('/notifications/unread', [NotificationController::class, 'getUnread']);
+        Route::post('/notifications/read/{propertyId}', [NotificationController::class, 'markOneAsRead']);
+        Route::post('/notifications/read-all', [NotificationController::class, 'markAsRead']);
     });
 
 
@@ -114,7 +118,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::group(['middleware' => ['role:owner']], function() {
         Route::get('/property/{propertyId}/bookings', [BookingController::class, 'getPropertyBookings']);
-
     });
 });
 
