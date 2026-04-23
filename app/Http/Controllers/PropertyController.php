@@ -6,6 +6,7 @@ use App\Events\PropertyStatusChanged;
 use App\Events\PropertyStored as EventsPropertyStored;
 use App\Http\Requests\PropertyRequest;
 use App\Models\Properties;
+use App\Services\PropertyService;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -21,6 +22,13 @@ use Illuminate\Support\Arr;
  */
 class PropertyController extends Controller
 {
+
+protected $property_service;
+
+    public function __construct(PropertyService $property_service)
+    {
+        $this->property_service = $property_service;
+    }
 
 
     public static function middleware(): array
@@ -115,15 +123,8 @@ class PropertyController extends Controller
      */
     public function store(PropertyRequest $request)
     {
-        $validatedData = $request->validated();
-
-        $validatedData['image'] = collect(Arr::wrap($request->file('image')))
-            ->map(fn($image) => Storage::url($image->store('properties', 'public')))
-            ->toArray();
-
         $user = $request->user();
-        $property = $request->user()->property()->create($validatedData);
-
+        $property = $this->property_service->createProperty($request->validated(), $request, $user);
         event(new EventsPropertyStored($property, $user->id));
 
         return response()->json([
@@ -209,26 +210,9 @@ class PropertyController extends Controller
     public function update(PropertyRequest $request, string $id)
     {
         $property = Properties::findOrFail($id);
-        $validatedData = $request->validated();
 
-        $existingImages = $request->input('existing_images', []);
-
-        $imagesToDelete = array_diff($property->image ?? [], $existingImages);
-
-        foreach ($imagesToDelete as $image) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $image));
-        }
-
-        $newImages = $request->hasFile('image')
-            ? collect(Arr::wrap($request->file('image')))
-            ->map(fn($file) => Storage::url($file->store('properties', 'public')))
-            ->toArray()
-            : [];
-
-        $finalImages = array_merge($existingImages, $newImages);
-        $validatedData['image'] = empty($finalImages) ? null : $finalImages;
-
-        $property->update($validatedData);
+        // 💡 Le pasamos la responsabilidad al servicio
+        $property = $this->property_service->updateProperty($property, $request->validated(), $request);
 
         if ($property->wasChanged('state')) {
             event(new PropertyStatusChanged($property));
